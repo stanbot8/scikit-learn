@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "project": "scikit-learn",
+  "project_url": "https://scikit-learn.org/",
+  "repo": "../..",
+  "benchmark_dir": ".",
+  "results_dir": "results",
+  "install_command": [
+    "python -mpip install {wheel_file}"
+  ],
+  "uninstall_command": [
+    "return-code=any python -mpip uninstall -y {project}"
+  ],
+  "build_command": [
+    "python -m build --wheel -Ccompile-args=-j4 -o {build_cache_dir} {build_dir}"
+  ],
+  "environment_type": "virtualenv",
+  "pythons": [
+    "3.12"
+  ],
+  "matrix": {
+    "numpy": [
+      "2.5.1"
+    ],
+    "scipy": [
+      "1.16.1"
+    ],
+    "cython": [
+      "3.1.2"
+    ],
+    "joblib": [
+      "1.5.1"
+    ],
+    "narwhals": [
+      "2.0.1"
+    ],
+    "threadpoolctl": [
+      "3.6.0"
+    ],
+    "pandas": [
+      "2.3.1"
+    ]
+  }
+}

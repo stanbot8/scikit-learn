@@ -1,0 +1,80 @@
+{
+  "benchmark_sha256": "560cbd162b68e60c230e2d87696dcda4c38e65071cf12460c6bd6293820e4f0b",
+  "campaign_id": "shape-to-reshape",
+  "command": [
+    "asv",
+    "continuous",
+    "-E",
+    "virtualenv:3.12",
+    "--bench",
+    "dataset_loading",
+    "--attribute",
+    "repeat=31",
+    "--interleave-rounds",
+    "--no-only-changed",
+    "9ddf4d35c20f780451aefd1c94c268da6367e4de",
+    "b22e4843733db4a4cca7b38c72d1dbf4c53a0f73"
+  ],
+  "config_sha256": "11988051e836b350af4cf850415cbfcf0bc5672dc265935071359cb4f306c52d",
+  "report": {
+    "candidate_revision": "b22e4843733db4a4cca7b38c72d1dbf4c53a0f73",
+    "cases": [
+      {
+        "baseline_seconds": 0.02043399983085692,
+        "candidate_seconds": 0.019969900138676167,
+        "correct": true,
+        "correctness": {
+          "candidate_checksum": 2073233467.0,
+          "candidate_shares_memory": true,
+          "output_matches": true,
+          "source_checksum": 2073233467.0,
+          "source_shares_memory": true
+        },
+        "name": "load_digits",
+        "ratio": 0.9772878684534426
+      },
+      {
+        "baseline_seconds": 0.000545451994985342,
+        "candidate_seconds": 0.0005025620013475418,
+        "correct": true,
+        "correctness": {
+          "candidate_checksum": 3603084264.0,
+          "candidate_shares_memory": true,
+          "output_matches": true,
+          "source_checksum": 3603084264.0,
+          "source_shares_memory": true
+        },
+        "name": "_fetch_lfw_pairs",
+        "ratio": 0.9213679773250204
+      }
+    ],
+    "command": [
+      "asv",
+      "continuous",
+      "-E",
+      "virtualenv:3.12",
+      "--bench",
+      "dataset_loading",
+      "--attribute",
+      "repeat=31",
+      "--interleave-rounds",
+      "--no-only-changed",
+      "9ddf4d35c20f780451aefd1c94c268da6367e4de",
+      "b22e4843733db4a4cca7b38c72d1dbf4c53a0f73"
+    ],
+    "environment": {
+      "asv": "asv 0.6.7.dev16+g7032df701",
+      "compiler": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35226 for x64",
+      "platform": "Windows-10-10.0.19045-SP0",
+      "python": "3.12.11"
+    },
+    "framework": "asv",
+    "repetitions": 31,
+    "source_revision": "9ddf4d35c20f780451aefd1c94c268da6367e4de",
+    "statistic": "ASV result"
+  },
+  "repository": "scikit-learn/scikit-learn",
+  "runner_sha256": "e5f42086e161565b9f705733569a0e5deaa62e2bb9dcb32bff81281c277c8a9f",
+  "schema_version": "1.0",
+  "spec_sha256": "fac343c3d5ae208baf119c988a959d863d9df73cf48b27ebd708625aeab624ee"
+}
