@@ -1,25 +1,25 @@
 {
   "definition_blob_sha1": {
-    ".github/workflows/alpha-bridge-ci-verify.yml": "0588ba302e7a97a9721ae7494f6b9aca053476b6",
-    ".github/workflows/autoclose-schedule.yml": "2bd556273dbb148987d3a3fbd73aefe38eb73b23",
-    ".github/workflows/check-sdist.yml": "b8348fc1677550bbd07ab6d09f24313f225a021c",
-    ".github/workflows/codeql.yml": "92f17b8af47d0ec338c2bb51a56f776e12723a92",
-    ".github/workflows/emscripten.yml": "b64671a13d091fdebe333784d44aa5fc2c0be39f",
-    ".github/workflows/unit-tests.yml": "b1e14a6a4fb732ece2b717b50e3992ca3de20303",
-    ".github/workflows/update-lock-files.yml": "a37ad5a325148a24493da4500fe1c0ebb02faed9",
-    ".github/workflows/wheels.yml": "3af62b68b92b29dadf596e348dc06bb4d046ab44"
+    ".github/workflows/alpha-bridge-ci-verify.yml": "211d78b275bbb87055d46d18edfc9b309afb7fd3",
+    ".github/workflows/autoclose-schedule.yml": "0f9d4199816db4241392da51b6ed0807e6ebefc7",
+    ".github/workflows/check-sdist.yml": "6cfc406dd4ffe715951b2b20d3af18274c8ab912",
+    ".github/workflows/codeql.yml": "6427df8445a57ed53b2fa15ffc89d68b4dafaf95",
+    ".github/workflows/emscripten.yml": "22ca8c3f1727ea97b2188da8b1fa5ba4701e1f7d",
+    ".github/workflows/unit-tests.yml": "e8d0391850c65d7da95223e39b7a0499296216a6",
+    ".github/workflows/update-lock-files.yml": "65c3e69e29ec7a167f29300f4ae00fc53270b7c1",
+    ".github/workflows/wheels.yml": "6f88247ec546a020f8d9fe71b20f4474fa670b25"
   },
   "definition_sha256": {
-    ".github/workflows/alpha-bridge-ci-verify.yml": "d3dacd19a9c94cd86ca5ba24b075c35f3ff224d155ca5891f3b4325ece933dac",
-    ".github/workflows/autoclose-schedule.yml": "893286e17cebf7b686fa492ef8c9acb1cf05401e590dbdd26b815549f7d5f454",
-    ".github/workflows/check-sdist.yml": "94b70bab332d6c142c04dd6385ba34151a2ae031eaf84e186a0447426a87d0ae",
-    ".github/workflows/codeql.yml": "cf917ab301a97dbdecf750136a28b5a59e6ce8519e678f7fe29da9c70776b810",
-    ".github/workflows/emscripten.yml": "18a97b4147664abf8e3411082928b3232a8ae56641947f31da9e7566097c6cb3",
-    ".github/workflows/unit-tests.yml": "aeded5bc19bc076c2981b09c568a44605fcf98483eb4785ab30eb6054c823777",
-    ".github/workflows/update-lock-files.yml": "788fa4b49f43b9911cee8d2fdb4526bee95c5a43a429c81dc48239a293448ae0",
-    ".github/workflows/wheels.yml": "e81aa78aa034c99eca5bbdadfcf63d02634f92493a24a1e0960c27d7055f13c1"
+    ".github/workflows/alpha-bridge-ci-verify.yml": "4cac5461d20019fd71bd15ab6e775a433bcfc570d3cc96f9132a4bf68d15c04e",
+    ".github/workflows/autoclose-schedule.yml": "173cd511d67ff2cbbd22bb01069fe351e175c80fad79d8dd1eb707060e4192cf",
+    ".github/workflows/check-sdist.yml": "c94215c700f00452d6b913115051a33402e2f2f1aade4841f26e71083a4014fb",
+    ".github/workflows/codeql.yml": "f84507b950c1a7a225420f60fd87dca316d3dc39c2da94481653b255a78743d2",
+    ".github/workflows/emscripten.yml": "9e8b08760563816e7c86964fcc42b96eacb0a06a6fe8db29484670eba2b2d519",
+    ".github/workflows/unit-tests.yml": "36a911ba0f70cac8a4a48bd9796ff1932d5a7b18ace5a3823f223cc749ff3b76",
+    ".github/workflows/update-lock-files.yml": "3735f7db3a510dcac67ee11072ea7c7ce15a34f44273960f05e1de87f1968b6e",
+    ".github/workflows/wheels.yml": "6296fea2219243f004a0aa7c7b31e6843198edd0647c0767122f8b0c54a9e2f0"
   },
-  "generator_sha256": "f238e5d52b0ec5c07f088af203f93698fbdea22a995856dc18c50f5365431353",
+  "generator_sha256": "f5fbad0230ba7fa85305a317f424ab1f31bb96ff28ce023a46664fdaad8051c9",
   "schema": "alpha-bridge/fork-ci",
   "source_branch": "main",
   "source_commit": "9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42",
