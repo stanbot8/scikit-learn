@@ -21,7 +21,9 @@ jobs:
         echo "ARTIFACTS_DIR=${{ runner.temp }}/artifacts" >> "$GITHUB_ENV"
 
     - name: Create temporary artifacts directory
-      run: mkdir -p "$ARTIFACTS_DIR"
+      run: |-
+        mkdir -p "$ARTIFACTS_DIR"
+
 
     - name: Download artifact
         # If nothing was uploaded in the linting step, this will error, but we still
@@ -65,7 +67,9 @@ jobs:
         python-version: 3.12
 
     - name: Install dependencies
-      run: python -m pip install PyGithub
+      run: |-
+        python -m pip install PyGithub
+
 
     - name: Create/update GitHub comment
       env:
@@ -101,7 +105,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          d866fa39de21bf7cc87b05344a576fd6cd4e45db6a1de83ff3550e200f44f899
+          18987d598fd58b96b8882efc9f319665b8684854dba916473b664eef7f3bd2d5
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

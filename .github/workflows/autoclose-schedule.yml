@@ -30,7 +30,9 @@ jobs:
       with:
         python-version: '3.13'
     - name: Install PyGithub
-      run: pip install -Uq PyGithub
+      run: |-
+        pip install -Uq PyGithub
+
 
     - name: Checkout repository
       uses: actions/checkout@v7
@@ -65,7 +67,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          e46685753f74f399f75b581a6a13ec3e9f3e207fba0fa22c4fba6dd4cdd4ea83
+          65448f5b7678f0fb8bbbc9e7f153783c7b5fa699266826636dd50a03de2a7ee4
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

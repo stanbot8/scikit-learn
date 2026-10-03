@@ -45,7 +45,8 @@ jobs:
       run: |
         pip install -r build_tools/github/lint_lock.txt
     - name: Run linters
-      run: ./build_tools/linting.sh
+      run: |-
+        ./build_tools/linting.sh
     - name: Run Meson OpenMP checks
       run: |
         pip install ninja meson scipy
@@ -284,7 +285,9 @@ jobs:
         activate-environment: ''
 
     - name: Build scikit-learn
-      run: bash -l build_tools/github/install.sh
+      run: |-
+        bash -l build_tools/github/install.sh
+
 
       # Enable global random seed randomization to discover seed-sensitive tests
       # only on nightly builds.
@@ -316,19 +319,24 @@ jobs:
         SELECTED_TESTS: ${{ needs.retrieve-selected-tests.outputs.tests }}
         COVERAGE: ${{ env.COVERAGE == 'true' && 
           needs.retrieve-selected-tests.outputs.tests == ''}}
-      run: bash -l build_tools/github/test_script.sh
+      run: |-
+        bash -l build_tools/github/test_script.sh
+
 
     - name: Run doctests in .py and .rst files
-      run: bash -l build_tools/github/test_docs.sh
+      run: |-
+        bash -l build_tools/github/test_docs.sh
       if: ${{ needs.retrieve-selected-tests.outputs.tests == ''}}
 
     - name: Run pytest soft dependency test
-      run: bash -l build_tools/github/test_pytest_soft_dependency.sh
+      run: |-
+        bash -l build_tools/github/test_pytest_soft_dependency.sh
       if: ${{ env.CHECK_PYTEST_SOFT_DEPENDENCY == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
     - name: Combine coverage reports from parallel test runners
-      run: bash -l build_tools/github/combine_coverage_reports.sh
+      run: |-
+        bash -l build_tools/github/combine_coverage_reports.sh
       if: ${{ env.COVERAGE == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
@@ -473,33 +481,33 @@ jobs:
         SELECTED_TESTS: ${{ needs.retrieve-selected-tests.outputs.tests }}
         COVERAGE: ${{ env.COVERAGE == 'true' && 
           needs.retrieve-selected-tests.outputs.tests == ''}}
-      run: >
-        docker container run --rm --volume $TEST_DIR:/temp_dir --volume $PWD:/scikit-learn
-        --volume $CCACHE_DIR:/ccache -w /scikit-learn --detach --name skcontainer
-        -e TEST_DIR=/temp_dir -e CCACHE_DIR=/ccache -e COVERAGE -e DISTRIB -e LOCK_FILE
-        -e JUNITXML -e VIRTUALENV -e PYTEST_XDIST_VERSION -e SKLEARN_SKIP_NETWORK_TESTS
-        -e SELECTED_TESTS -e CCACHE_COMPRESS -e COMMIT_MESSAGE -e JOB_NAME -e SKLEARN_TESTS_GLOBAL_RANDOM_SEED
-        -e SKLEARN_RUN_FLOAT32_TESTS $DOCKER_CONTAINER sleep 1000000
+      run: |
+        docker container run --rm --volume $TEST_DIR:/temp_dir --volume $PWD:/scikit-learn --volume $CCACHE_DIR:/ccache -w /scikit-learn --detach --name skcontainer -e TEST_DIR=/temp_dir -e CCACHE_DIR=/ccache -e COVERAGE -e DISTRIB -e LOCK_FILE -e JUNITXML -e VIRTUALENV -e PYTEST_XDIST_VERSION -e SKLEARN_SKIP_NETWORK_TESTS -e SELECTED_TESTS -e CCACHE_COMPRESS -e COMMIT_MESSAGE -e JOB_NAME -e SKLEARN_TESTS_GLOBAL_RANDOM_SEED -e SKLEARN_RUN_FLOAT32_TESTS $DOCKER_CONTAINER sleep 1000000
 
     - name: Build scikit-learn
-      run: docker exec skcontainer bash -l build_tools/github/install.sh
+      run: |-
+        docker exec skcontainer bash -l build_tools/github/install.sh
+
 
     - name: Run tests
-      run: docker exec skcontainer bash -l build_tools/github/test_script.sh
+      run: |-
+        docker exec skcontainer bash -l build_tools/github/test_script.sh
+
 
     - name: Run doctests in .py and .rst files
-      run: docker exec skcontainer bash -l build_tools/github/test_docs.sh
+      run: |-
+        docker exec skcontainer bash -l build_tools/github/test_docs.sh
       if: ${{ needs.retrieve-selected-tests.outputs.tests == ''}}
 
     - name: Run pytest soft dependency test
-      run: docker exec skcontainer 
-        build_tools/github/test_pytest_soft_dependency.sh
+      run: |-
+        docker exec skcontainer build_tools/github/test_pytest_soft_dependency.sh
       if: ${{ env.CHECK_PYTEST_SOFT_DEPENDENCY == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
     - name: Combine coverage reports from parallel test runners
-      run: docker exec skcontainer bash -l 
-        build_tools/github/combine_coverage_reports.sh
+      run: |-
+        docker exec skcontainer bash -l build_tools/github/combine_coverage_reports.sh
       if: ${{ env.COVERAGE == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
@@ -570,7 +578,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          55086f700c2fa3db5ebc2587330a0a9f520eac256b7b309107fe76d068424549
+          d76b76c28cac4f14958042f9addf022d29a52b2deacd40e0e4ac6658711a10b8
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

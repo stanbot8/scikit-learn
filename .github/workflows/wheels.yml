@@ -42,7 +42,9 @@ jobs:
 
     - id: check_build_trigger
       name: Check build trigger
-      run: bash build_tools/github/check_build_trigger.sh
+      run: |-
+        bash build_tools/github/check_build_trigger.sh
+
 
   # Build the wheels for Linux, Windows and macOS for Python 3.9 and newer
     needs:
@@ -179,7 +181,9 @@ jobs:
 
     - name: Set up macOS OpenMP
       if: ${{ startsWith(matrix.platform_id, 'macosx') }}
-      run: bash build_tools/wheels/configure_macos_env.sh
+      run: |-
+        bash build_tools/wheels/configure_macos_env.sh
+
 
     - name: Set SOURCE_DATE_EPOCH from source commit
       run: |
@@ -239,10 +243,13 @@ jobs:
         python-version: '3.12'
 
     - name: Build source distribution
-      run: bash build_tools/github/build_source.sh
+      run: |-
+        bash build_tools/github/build_source.sh
+
 
     - name: Test source distribution
-      run: bash build_tools/github/test_source.sh
+      run: |-
+        bash build_tools/github/test_source.sh
       env:
         SKLEARN_SKIP_NETWORK_TESTS: 1
 
@@ -290,7 +297,8 @@ jobs:
           secrets.SCIKIT_LEARN_STAGING_UPLOAD_TOKEN }}
         ARTIFACTS_PATH: dist
         # Force a replacement if the remote file already exists
-      run: bash build_tools/github/upload_anaconda.sh
+      run: |-
+        bash build_tools/github/upload_anaconda.sh
   alpha_bridge_inputs:
     name: AlphaBridge input check
     runs-on: ubuntu-latest
@@ -312,7 +320,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          bb743f6d73b972adfc434c8979ac2ebafb2e38be0d68c633ef5d4b1e7b4ae346
+          bb376386a247f7e3fd9fb12a98dbeb2831279387b05b6a0af32461d0b1e757a1
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}
