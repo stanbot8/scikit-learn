@@ -5,15 +5,15 @@ permissions:
 on:
   push:
   pull_request:
-  schedule:
-    # Nightly build at 02:30 UTC
-  - cron: 30 2 * * *
+  schedule: -
+    cron: 30 2 * * *
   # Manual run
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: ${{ github.event_name != 'schedule' && (true) }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' && github.event_name 
+    != 'workflow_run' && (true) }}
 
 env:
   VIRTUALENV: testvenv
@@ -32,6 +32,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v7
+      with:
+        ref: ${{ (github.event_name == 'schedule' || github.event_name == 
+          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          github.sha }}
     - uses: actions/setup-python@v6
       with:
         python-version: '3.12'
@@ -244,20 +248,27 @@ jobs:
 
     env: ${{ matrix }}
 
-    steps: &unit-tests-steps
-    - name: Checkout
+    steps:
+    - &id001
+      name: Checkout
       uses: actions/checkout@v7
 
       # This step is necessary to access the job name the same way in both matrix and
       # non-matrix jobs (like free-threaded or scipy-dev builds).
-    - name: Set JOB_NAME variable
+      with:
+        ref: ${{ (github.event_name == 'schedule' || github.event_name == 
+          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          github.sha }}
+    - &id002
+      name: Set JOB_NAME variable
       shell: bash
       run: |
         if [[ -z "$JOB_NAME" ]]; then
           echo "JOB_NAME=${{ matrix.name }}" >> $GITHUB_ENV
         fi
 
-    - name: Create cache for ccache
+    - &id003
+      name: Create cache for ccache
       uses: actions/cache@v5
       with:
         path: ${{ env.CCACHE_DIR }}
@@ -266,7 +277,8 @@ jobs:
           format('{0}', env.LOCK_FILE)) }}
         restore-keys: ccache-${{ env.JOB_NAME }}
 
-    - name: Set up conda
+    - &id004
+      name: Set up conda
       uses: conda-incubator/setup-miniconda@v4
       if: ${{ startsWith(env.DISTRIB, 'conda') }}
       with:
@@ -274,13 +286,15 @@ jobs:
         auto-activate: true
         activate-environment: ''
 
-    - name: Build scikit-learn
+    - &id005
+      name: Build scikit-learn
       run: bash -l build_tools/github/install.sh
 
       # Enable global random seed randomization to discover seed-sensitive tests
       # only on nightly builds.
       # https://scikit-learn.org/stable/developers/global_configuration.html#sklearn-tests-global-random-seed
-    - name: Set random global random seed for nightly/manual runs
+    - &id006
+      name: Set random global random seed for nightly/manual runs
       if: github.event_name == 'schedule' || github.event_name == 
         'workflow_dispatch'
       shell: bash
@@ -294,14 +308,16 @@ jobs:
       # Enable global dtype fixture for all nightly builds to discover
       # numerical-sensitive tests.
       # https://scikit-learn.org/stable/developers/global_configuration.html#sklearn-run-float32-tests
-    - name: Run float32 tests for nightly/manual runs
+    - &id007
+      name: Run float32 tests for nightly/manual runs
       if: github.event_name == 'schedule' || github.event_name == 
         'workflow_dispatch'
       shell: bash
       run: |
         echo SKLEARN_RUN_FLOAT32_TESTS=1 >> $GITHUB_ENV
 
-    - name: Run tests
+    - &id008
+      name: Run tests
       env:
         COMMIT_MESSAGE: ${{ needs.retrieve-commit-message.outputs.message }}
         SELECTED_TESTS: ${{ needs.retrieve-selected-tests.outputs.tests }}
@@ -309,21 +325,25 @@ jobs:
           needs.retrieve-selected-tests.outputs.tests == ''}}
       run: bash -l build_tools/github/test_script.sh
 
-    - name: Run doctests in .py and .rst files
+    - &id009
+      name: Run doctests in .py and .rst files
       run: bash -l build_tools/github/test_docs.sh
       if: ${{ needs.retrieve-selected-tests.outputs.tests == ''}}
 
-    - name: Run pytest soft dependency test
+    - &id010
+      name: Run pytest soft dependency test
       run: bash -l build_tools/github/test_pytest_soft_dependency.sh
       if: ${{ env.CHECK_PYTEST_SOFT_DEPENDENCY == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
-    - name: Combine coverage reports from parallel test runners
+    - &id011
+      name: Combine coverage reports from parallel test runners
       run: bash -l build_tools/github/combine_coverage_reports.sh
       if: ${{ env.COVERAGE == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
-    - name: Upload coverage report to Codecov
+    - &id012
+      name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v6
       if: ${{ env.COVERAGE == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
@@ -332,7 +352,8 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         disable_search: true
 
-    - name: Update tracking issue
+    - &id013
+      name: Update tracking issue
       if: ${{ always() && (github.event_name == 'schedule' || github.event_name 
         == 'workflow_dispatch')}}
       shell: bash
@@ -350,7 +371,7 @@ jobs:
           --job-name "$JOB_NAME"
 
   free-threaded:
-    name: &free-threaded-job-name Linux x86-64 pylatest_free_threaded
+    name: Linux x86-64 pylatest_free_threaded
     runs-on: ubuntu-latest
     needs:
     - lint
@@ -368,11 +389,24 @@ jobs:
       # Disable pytest-xdist to use multiple cores for stress-testing with pytest-run-parallel
       PYTEST_XDIST_VERSION: none
       # To be able to access the job name in the steps, it must be set as an env variable.
-      JOB_NAME: *free-threaded-job-name
-    steps: *unit-tests-steps
+      JOB_NAME: Linux x86-64 pylatest_free_threaded
+    steps:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+    - *id009
+    - *id010
+    - *id011
+    - *id012
+    - *id013
 
   scipy-dev:
-    name: &scipy-dev-job-name Linux x86-64 pylatest_pip_scipy_dev
+    name: Linux x86-64 pylatest_pip_scipy_dev
     runs-on: ubuntu-22.04
     needs:
     - lint
@@ -389,11 +423,24 @@ jobs:
       SKLEARN_WARNINGS_AS_ERRORS: 1
       CHECK_PYTEST_SOFT_DEPENDENCY: true
       # To be able to access the job name in the steps, it must be set as an env variable.
-      JOB_NAME: *scipy-dev-job-name
-    steps: *unit-tests-steps
+      JOB_NAME: Linux x86-64 pylatest_pip_scipy_dev
+    steps:
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+    - *id005
+    - *id006
+    - *id007
+    - *id008
+    - *id009
+    - *id010
+    - *id011
+    - *id012
+    - *id013
 
   debian-32bit:
-    name: &debian-32bit-job-name Linux i386 debian_32bit
+    name: Linux i386 debian_32bit
     runs-on: ubuntu-24.04
     needs:
     - lint
@@ -406,11 +453,15 @@ jobs:
       SKLEARN_TESTS_GLOBAL_RANDOM_SEED: 4  # non-default seed
       DOCKER_CONTAINER: i386/debian:trixie
       # To be able to access the job name in the steps, it must be set as an env variable.
-      JOB_NAME: *debian-32bit-job-name
+      JOB_NAME: Linux i386 debian_32bit
     steps:
     - name: Checkout
       uses: actions/checkout@v7
 
+      with:
+        ref: ${{ (github.event_name == 'schedule' || github.event_name == 
+          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          github.sha }}
     - name: Create cache for ccache
       uses: actions/cache@v5
       with:
@@ -461,30 +512,12 @@ jobs:
         COVERAGE: ${{ env.COVERAGE == 'true' && 
           needs.retrieve-selected-tests.outputs.tests == ''}}
       run: >
-        docker container run --rm
-        --volume $TEST_DIR:/temp_dir
-        --volume $PWD:/scikit-learn
-        --volume $CCACHE_DIR:/ccache
-        -w /scikit-learn
-        --detach
-        --name skcontainer
-        -e TEST_DIR=/temp_dir
-        -e CCACHE_DIR=/ccache
-        -e COVERAGE
-        -e DISTRIB
-        -e LOCK_FILE
-        -e JUNITXML
-        -e VIRTUALENV
-        -e PYTEST_XDIST_VERSION
-        -e SKLEARN_SKIP_NETWORK_TESTS
-        -e SELECTED_TESTS
-        -e CCACHE_COMPRESS
-        -e COMMIT_MESSAGE
-        -e JOB_NAME
-        -e SKLEARN_TESTS_GLOBAL_RANDOM_SEED
-        -e SKLEARN_RUN_FLOAT32_TESTS
-        $DOCKER_CONTAINER
-        sleep 1000000
+        docker container run --rm --volume $TEST_DIR:/temp_dir --volume $PWD:/scikit-learn
+        --volume $CCACHE_DIR:/ccache -w /scikit-learn --detach --name skcontainer
+        -e TEST_DIR=/temp_dir -e CCACHE_DIR=/ccache -e COVERAGE -e DISTRIB -e LOCK_FILE
+        -e JUNITXML -e VIRTUALENV -e PYTEST_XDIST_VERSION -e SKLEARN_SKIP_NETWORK_TESTS
+        -e SELECTED_TESTS -e CCACHE_COMPRESS -e COMMIT_MESSAGE -e JOB_NAME -e SKLEARN_TESTS_GLOBAL_RANDOM_SEED
+        -e SKLEARN_RUN_FLOAT32_TESTS $DOCKER_CONTAINER sleep 1000000
 
     - name: Build scikit-learn
       run: docker exec skcontainer bash -l build_tools/github/install.sh
@@ -575,17 +608,48 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          f99eb327b147a7a3fa998d0e3468f9b41ccddcd5efb338da32bb6b1cf53bea11
+          0e0c988eeaf5b8cd60546af57b88bf5b7a98f1931ffc14ac82c9a43976fe41cb
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}
         AB_INPUTS: ${{ toJSON(inputs) }}
+        AB_WORKFLOW_RUN: ${{ toJSON(github.event.workflow_run) }}
       shell: bash
       run: "python3 - <<'ALPHA_BRIDGE_CI_PY'\n\"\"\"Native scheduled-CI input check,
         embedded in the owned fork configuration.\"\"\"\n\nfrom __future__ import
-        annotations\n\nimport hashlib\nimport json\nimport os\nimport urllib.parse\n\
-        import urllib.request\n\n\ndef changed(get, *, repository, run_id, identity,
-        job_name):\n    current = get(f\"/repos/{repository}/actions/runs/{run_id}\"\
+        annotations\n\nimport base64\nimport hashlib\nimport json\nimport os\nimport
+        re\nimport urllib.parse\nimport urllib.request\n\n\ndef parent_has_work(get,
+        repository, parent):\n    if (\n        not parent\n        or parent.get(\"\
+        head_branch\") != \"alpha-bridge-ci\"\n        or parent.get(\"status\") !=
+        \"completed\"\n    ):\n        return True\n    sha = parent[\"head_sha\"\
+        ]\n    if re.fullmatch(r\"[0-9a-f]{40}\", sha) is None:\n        raise ValueError(\"\
+        parent workflow has no exact configuration commit\")\n    record = get(f\"\
+        /repos/{repository}\")\n    marker_file = get(f\"/repos/{repository}/contents/.github/alpha-bridge-ci.json?ref={sha}\"\
+        )\n    marker = json.loads(base64.b64decode(marker_file[\"content\"]))\n \
+        \   if (\n        record.get(\"fork\") is not True\n        or marker.get(\"\
+        schema\") != \"alpha-bridge/fork-ci\"\n        or marker.get(\"source_repository\"\
+        ) != record.get(\"parent\", {}).get(\"full_name\")\n    ):\n        raise
+        ValueError(\"parent CI configuration has no verified fork ownership\")\n \
+        \   path = parent[\"path\"].split(\"@\", 1)[0]\n    if not path.startswith(\"\
+        .github/workflows/\") or \"/\" in path.removeprefix(\".github/workflows/\"\
+        ):\n        raise ValueError(\"parent workflow path is outside its configuration
+        owner\")\n    definition = get(f\"/repos/{repository}/contents/{urllib.parse.quote(path,
+        safe='/')}?ref={sha}\")\n    if hashlib.sha256(base64.b64decode(definition[\"\
+        content\"])).hexdigest() != marker.get(\n        \"definition_sha256\", {}\n\
+        \    ).get(path):\n        raise ValueError(\"parent workflow differs from
+        its owned definition\")\n    if path == \".github/workflows/alpha-bridge-ci-verify.yml\"\
+        :\n        return False\n    jobs = []\n    page = 1\n    while True:\n  \
+        \      values = get(\n            f\"/repos/{repository}/actions/runs/{parent['id']}/jobs?per_page=100&page={page}\"\
+        \n        )[\"jobs\"]\n        jobs.extend(values)\n        if len(values)
+        < 100:\n            break\n        page += 1\n    guards = [\n        job\n\
+        \        for job in jobs\n        if job.get(\"name\") == \"AlphaBridge input
+        check\"\n        and job.get(\"conclusion\") == \"success\"\n        and any(\n\
+        \            re.fullmatch(r\"AlphaBridge input identity [0-9a-f]{64}\", step.get(\"\
+        name\", \"\"))\n            and step.get(\"conclusion\") == \"success\"\n\
+        \            for step in job.get(\"steps\", [])\n        )\n    ]\n    return
+        not guards or any(\n        job not in guards and job.get(\"conclusion\")
+        != \"skipped\" for job in jobs\n    )\n\n\ndef changed(get, *, repository,
+        run_id, identity, job_name):\n    current = get(f\"/repos/{repository}/actions/runs/{run_id}\"\
         )\n    event = current[\"event\"]\n    query = urllib.parse.urlencode(\n \
         \       {\n            \"branch\": current[\"head_branch\"],\n           \
         \ \"event\": event,\n            \"per_page\": 100,\n        }\n    )\n  \
@@ -610,7 +674,8 @@ jobs:
         AB_SCHEDULE\"],\n        \"variables\": json.loads(os.environ[\"AB_VARIABLES\"\
         ]),\n        \"inputs\": json.loads(os.environ[\"AB_INPUTS\"]),\n        \"\
         runner_image\": [os.environ.get(\"ImageOS\", \"\"), os.environ.get(\"ImageVersion\"\
-        , \"\")],\n    }\n    identity = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()\n\
+        , \"\")],\n        \"producer\": json.loads(os.environ.get(\"AB_WORKFLOW_RUN\"\
+        , \"null\")),\n    }\n    identity = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()\n\
         \n    def get(path):\n        request = urllib.request.Request(\n        \
         \    \"https://api.github.com\" + path,\n            headers={\n         \
         \       \"Authorization\": \"Bearer \" + os.environ[\"GH_TOKEN\"],\n     \
@@ -618,11 +683,14 @@ jobs:
         \ \"X-GitHub-Api-Version\": \"2026-03-10\",\n            },\n        )\n \
         \       with urllib.request.urlopen(request, timeout=60) as response:\n  \
         \          return json.load(response)\n\n    should_run = inputs[\"event\"\
-        ] != \"schedule\" or changed(\n        get,\n        repository=os.environ[\"\
-        AB_REPOSITORY\"],\n        run_id=int(os.environ[\"AB_RUN_ID\"]),\n      \
-        \  identity=identity,\n        job_name=\"AlphaBridge input check\",\n   \
-        \ )\n    with open(os.environ[\"GITHUB_OUTPUT\"], \"a\", encoding=\"utf-8\"\
-        ) as output:\n        output.write(f\"digest={identity}\\nchanged={str(should_run).lower()}\\\
+        ] not in {\"schedule\", \"workflow_run\"} or (\n        (\n            inputs[\"\
+        event\"] != \"workflow_run\"\n            or parent_has_work(get, os.environ[\"\
+        AB_REPOSITORY\"], inputs[\"producer\"])\n        )\n        and changed(\n\
+        \            get,\n            repository=os.environ[\"AB_REPOSITORY\"],\n\
+        \            run_id=int(os.environ[\"AB_RUN_ID\"]),\n            identity=identity,\n\
+        \            job_name=\"AlphaBridge input check\",\n        )\n    )\n   \
+        \ with open(os.environ[\"GITHUB_OUTPUT\"], \"a\", encoding=\"utf-8\") as output:\n\
+        \        output.write(f\"digest={identity}\\nchanged={str(should_run).lower()}\\\
         n\")\n    print(\"CI inputs changed\" if should_run else \"CI inputs unchanged;
         build and test jobs skipped\")\n\n\nif __name__ == \"__main__\":\n    main()\n\
         \nALPHA_BRIDGE_CI_PY\n"
