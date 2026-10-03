@@ -5,8 +5,9 @@ permissions:
 on:
   push:
   pull_request:
-  schedule: -
-    cron: 30 2 * * *
+  schedule:
+    # Nightly build at 02:30 UTC
+  - cron: 30 2 * * *
   # Manual run
   workflow_dispatch:
 
@@ -248,9 +249,8 @@ jobs:
 
     env: ${{ matrix }}
 
-    steps:
-    - &id001
-      name: Checkout
+    steps: &unit-tests-steps
+    - name: Checkout
       uses: actions/checkout@v7
 
       # This step is necessary to access the job name the same way in both matrix and
@@ -259,16 +259,14 @@ jobs:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
           'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
           github.sha }}
-    - &id002
-      name: Set JOB_NAME variable
+    - name: Set JOB_NAME variable
       shell: bash
       run: |
         if [[ -z "$JOB_NAME" ]]; then
           echo "JOB_NAME=${{ matrix.name }}" >> $GITHUB_ENV
         fi
 
-    - &id003
-      name: Create cache for ccache
+    - name: Create cache for ccache
       uses: actions/cache@v5
       with:
         path: ${{ env.CCACHE_DIR }}
@@ -277,8 +275,7 @@ jobs:
           format('{0}', env.LOCK_FILE)) }}
         restore-keys: ccache-${{ env.JOB_NAME }}
 
-    - &id004
-      name: Set up conda
+    - name: Set up conda
       uses: conda-incubator/setup-miniconda@v4
       if: ${{ startsWith(env.DISTRIB, 'conda') }}
       with:
@@ -286,15 +283,13 @@ jobs:
         auto-activate: true
         activate-environment: ''
 
-    - &id005
-      name: Build scikit-learn
+    - name: Build scikit-learn
       run: bash -l build_tools/github/install.sh
 
       # Enable global random seed randomization to discover seed-sensitive tests
       # only on nightly builds.
       # https://scikit-learn.org/stable/developers/global_configuration.html#sklearn-tests-global-random-seed
-    - &id006
-      name: Set random global random seed for nightly/manual runs
+    - name: Set random global random seed for nightly/manual runs
       if: github.event_name == 'schedule' || github.event_name == 
         'workflow_dispatch'
       shell: bash
@@ -308,16 +303,14 @@ jobs:
       # Enable global dtype fixture for all nightly builds to discover
       # numerical-sensitive tests.
       # https://scikit-learn.org/stable/developers/global_configuration.html#sklearn-run-float32-tests
-    - &id007
-      name: Run float32 tests for nightly/manual runs
+    - name: Run float32 tests for nightly/manual runs
       if: github.event_name == 'schedule' || github.event_name == 
         'workflow_dispatch'
       shell: bash
       run: |
         echo SKLEARN_RUN_FLOAT32_TESTS=1 >> $GITHUB_ENV
 
-    - &id008
-      name: Run tests
+    - name: Run tests
       env:
         COMMIT_MESSAGE: ${{ needs.retrieve-commit-message.outputs.message }}
         SELECTED_TESTS: ${{ needs.retrieve-selected-tests.outputs.tests }}
@@ -325,25 +318,21 @@ jobs:
           needs.retrieve-selected-tests.outputs.tests == ''}}
       run: bash -l build_tools/github/test_script.sh
 
-    - &id009
-      name: Run doctests in .py and .rst files
+    - name: Run doctests in .py and .rst files
       run: bash -l build_tools/github/test_docs.sh
       if: ${{ needs.retrieve-selected-tests.outputs.tests == ''}}
 
-    - &id010
-      name: Run pytest soft dependency test
+    - name: Run pytest soft dependency test
       run: bash -l build_tools/github/test_pytest_soft_dependency.sh
       if: ${{ env.CHECK_PYTEST_SOFT_DEPENDENCY == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
-    - &id011
-      name: Combine coverage reports from parallel test runners
+    - name: Combine coverage reports from parallel test runners
       run: bash -l build_tools/github/combine_coverage_reports.sh
       if: ${{ env.COVERAGE == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
 
-    - &id012
-      name: Upload coverage report to Codecov
+    - name: Upload coverage report to Codecov
       uses: codecov/codecov-action@v6
       if: ${{ env.COVERAGE == 'true' && 
         needs.retrieve-selected-tests.outputs.tests == ''}}
@@ -352,8 +341,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         disable_search: true
 
-    - &id013
-      name: Update tracking issue
+    - name: Update tracking issue
       if: ${{ always() && (github.event_name == 'schedule' || github.event_name 
         == 'workflow_dispatch')}}
       shell: bash
@@ -390,20 +378,7 @@ jobs:
       PYTEST_XDIST_VERSION: none
       # To be able to access the job name in the steps, it must be set as an env variable.
       JOB_NAME: Linux x86-64 pylatest_free_threaded
-    steps:
-    - *id001
-    - *id002
-    - *id003
-    - *id004
-    - *id005
-    - *id006
-    - *id007
-    - *id008
-    - *id009
-    - *id010
-    - *id011
-    - *id012
-    - *id013
+    steps: *unit-tests-steps
 
   scipy-dev:
     name: Linux x86-64 pylatest_pip_scipy_dev
@@ -424,20 +399,7 @@ jobs:
       CHECK_PYTEST_SOFT_DEPENDENCY: true
       # To be able to access the job name in the steps, it must be set as an env variable.
       JOB_NAME: Linux x86-64 pylatest_pip_scipy_dev
-    steps:
-    - *id001
-    - *id002
-    - *id003
-    - *id004
-    - *id005
-    - *id006
-    - *id007
-    - *id008
-    - *id009
-    - *id010
-    - *id011
-    - *id012
-    - *id013
+    steps: *unit-tests-steps
 
   debian-32bit:
     name: Linux i386 debian_32bit
@@ -608,7 +570,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          0e0c988eeaf5b8cd60546af57b88bf5b7a98f1931ffc14ac82c9a43976fe41cb
+          55086f700c2fa3db5ebc2587330a0a9f520eac256b7b309107fe76d068424549
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

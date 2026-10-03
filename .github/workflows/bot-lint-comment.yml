@@ -6,10 +6,10 @@ permissions:
 
 on:
   workflow_run:
-    workflows:
-    - Linter
+    workflows: [Linter]
     types:
     - completed
+
 jobs:
   bot-comment:
     runs-on: ubuntu-latest
@@ -101,7 +101,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          33cd9561885e446c6ddaafbc2bd759d59db9a5988cca5173865aebec39031025
+          d866fa39de21bf7cc87b05344a576fd6cd4e45db6a1de83ff3550e200f44f899
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

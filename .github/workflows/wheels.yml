@@ -4,16 +4,19 @@ permissions:
   contents: read
 
 on:
-  schedule: -
-    cron: 42 3 */1 * *
+  schedule:
+    # Nightly build at 3:42 A.M.
+  - cron: 42 3 */1 * *
   push:
     branches:
     - main
+      # Release branches
     - '[0-9]+.[0-9]+.X'
   pull_request:
     branches:
     - main
     - '[0-9]+.[0-9]+.X'
+  # Manual run
   workflow_dispatch:
 
 concurrency:
@@ -63,8 +66,9 @@ jobs:
       # Ensure that a wheel builder finishes even if another fails
       fail-fast: false
       matrix:
-        include: -
-          os: windows-latest
+        include:
+          # Window 64 bit
+        - os: windows-latest
           python: 312
           platform_id: win_amd64
         - os: windows-latest
@@ -308,7 +312,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          772fa281eb5492a48c9173d0fc448946d3cc0d31222e83f097e97cda3b8e2d52
+          bb743f6d73b972adfc434c8979ac2ebafb2e38be0d68c633ef5d4b1e7b4ae346
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

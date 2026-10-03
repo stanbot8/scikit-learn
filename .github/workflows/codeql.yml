@@ -2,13 +2,9 @@ name: CodeQL
 
 on:
   push:
-    branches:
-    - main
-    - '*.X'
+    branches: [main, '*.X']
   pull_request:
-    branches:
-    - main
-    - '*.X'
+    branches: [main, '*.X']
   schedule:
   - cron: 0 6 * * 1
 
@@ -33,10 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language:
-        - javascript-typescript
-        - python
-        - actions
+        language: [javascript-typescript, python, actions]
         # CodeQL supports [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
         # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
         # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
@@ -107,7 +100,7 @@ jobs:
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
         AB_WORKFLOW_DIGEST: 
-          4d6a86d5ebbc7cdbd4ec357a935b37cd4fad8b17aa54f6e7625d18a593b961f3
+          b138120fd7bd359c9bc31485670beb9e1b48d2e4b08784a950d647d13a51da3e
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}
