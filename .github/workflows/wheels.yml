@@ -167,7 +167,7 @@ jobs:
 
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - name: Setup Python
       uses: actions/setup-python@v6
@@ -235,7 +235,7 @@ jobs:
 
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - name: Setup Python
       uses: actions/setup-python@v6
@@ -278,7 +278,7 @@ jobs:
 
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - name: Download artifacts
       uses: actions/download-artifact@v8
@@ -318,9 +318,9 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         AB_REPOSITORY: ${{ github.repository }}
         AB_RUN_ID: ${{ github.run_id }}
-        AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
+        AB_HEAD_SHA: a442e4bb39551feb7b0af4c00075e2cb91cf9b77
         AB_WORKFLOW_DIGEST: 
-          bb376386a247f7e3fd9fb12a98dbeb2831279387b05b6a0af32461d0b1e757a1
+          d98c7094ec43cbdfbda2bc88b878084a03a622c5cf75181f5d1d88e81635cdfb
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

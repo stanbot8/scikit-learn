@@ -59,7 +59,7 @@ jobs:
         sparse-checkout: build_tools/get_comment.py
 
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - name: Set up Python
       uses: actions/setup-python@v6
@@ -103,9 +103,9 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         AB_REPOSITORY: ${{ github.repository }}
         AB_RUN_ID: ${{ github.run_id }}
-        AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
+        AB_HEAD_SHA: a442e4bb39551feb7b0af4c00075e2cb91cf9b77
         AB_WORKFLOW_DIGEST: 
-          18987d598fd58b96b8882efc9f319665b8684854dba916473b664eef7f3bd2d5
+          a28a672afaf8509065fc416fbf6979d92c6fbf77e8408a52817072050144725c
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

@@ -1,30 +1,30 @@
 {
   "definition_blob_sha1": {
     ".github/workflows/alpha-bridge-ci-verify.yml": "21051178fb840f31162cde1a64943007a2178f3f",
-    ".github/workflows/autoclose-schedule.yml": "d74ab70f321c4ff3ced709867d1075ad84d4faf2",
-    ".github/workflows/bot-lint-comment.yml": "b5c0aafc69481e3ce7a016af41748c0d91003557",
-    ".github/workflows/check-sdist.yml": "246550a94cefcb1eb07da1b925f782cc94c9c1c8",
-    ".github/workflows/codeql.yml": "c0e3dc2d314952bb98a280c64ed8bd58a9aaf08a",
-    ".github/workflows/emscripten.yml": "83b89144ca02c9fff89a3b5b6f60cd2328772305",
-    ".github/workflows/unit-tests.yml": "5455106aeb772d09e6ce34e4da257bc7b1a619ac",
-    ".github/workflows/update-lock-files.yml": "2c1f1e1298fca9a12e2314a071c2973865f0b1d6",
-    ".github/workflows/wheels.yml": "81cb1389c4fa627499526232941414e69fe74c7e"
+    ".github/workflows/autoclose-schedule.yml": "6043f4107c5eae808322c6e66956c641482aec95",
+    ".github/workflows/bot-lint-comment.yml": "61c7cac10d98347b731ca5d2f4d8fa87f3ffa810",
+    ".github/workflows/check-sdist.yml": "adbc1894a55e6ad89b2314f03e93ec27e75223af",
+    ".github/workflows/codeql.yml": "de12b591c981162ae0cb92c098b177d0a869078a",
+    ".github/workflows/emscripten.yml": "381c104e1cf04569305af0d1b88db1f392d80114",
+    ".github/workflows/unit-tests.yml": "e1db58ae7f224e92d02291dcd93c23a4c3ef58e0",
+    ".github/workflows/update-lock-files.yml": "030bbd9fc452c8370a1013e6d3683e934c1d172a",
+    ".github/workflows/wheels.yml": "56d3ac0a39c06f1b2a3e8b372fcc62416d06cc35"
   },
   "definition_sha256": {
     ".github/workflows/alpha-bridge-ci-verify.yml": "f1d0d506e1faf2ef9e00102fbf464fa1a74203bf3463e623621402b9de9e8a45",
-    ".github/workflows/autoclose-schedule.yml": "69c88fe016d8720e76c26a8d13dca9e5fedc4a8d7f6d13f1c643b47c54f080dc",
-    ".github/workflows/bot-lint-comment.yml": "6c408eafac6456e7da6a9637cc696a44ac776ff0a6c64dcdc09d6dc84dc7c34f",
-    ".github/workflows/check-sdist.yml": "6061f8606ef595bc6a4ac618c1cd1dd57fd19c21bff6237dec18eaf1659d9526",
-    ".github/workflows/codeql.yml": "50c4cf198519f8ecdaf63ab83abc721c1ad362a6d4e89bbf3dd027bab6aec87d",
-    ".github/workflows/emscripten.yml": "c8f32500ef3aa533b4b5bde8211921fe20e365439d6ecaf75bc96bd028df3e19",
-    ".github/workflows/unit-tests.yml": "428311dac998766075be61b3007f5b9bfad1f07e841c6080bb5f4bb904e7fa33",
-    ".github/workflows/update-lock-files.yml": "853ab9bfc3ac01a5da7e433de71d17d94687112344358fec6791f67561bf3e57",
-    ".github/workflows/wheels.yml": "3c4d5db84cadf539cf391121e0b7baf7a960ae27a167780ff4f7a06d4215a112"
+    ".github/workflows/autoclose-schedule.yml": "44d21567326d0c0e1123e4b975766a9c1f940e539740331d29035ae216e34930",
+    ".github/workflows/bot-lint-comment.yml": "f66607c05f2a9099613ddd8f44d827b24b16adf5d1f750eacb36a64cc0fb5a99",
+    ".github/workflows/check-sdist.yml": "3075dbc1a87578133996c01f25dd5af8e019756299b3055814fb51e4f147cabc",
+    ".github/workflows/codeql.yml": "db83ad91f48d266629bfd9299e0ee4e130fbe71e314f2363384a68342043b276",
+    ".github/workflows/emscripten.yml": "d10cb19d7270020ef4f6e16894300b6e5e39695fe46bb938fe9354707c71be26",
+    ".github/workflows/unit-tests.yml": "f08ce70da97a01f60d44470d858597c2b4a0dc120b7f2f6da2f42edffa1ef96e",
+    ".github/workflows/update-lock-files.yml": "591ec4dd0fd10d7a065690ede691c802c2d496ea2a2aa4a4b0f6c940c22c5310",
+    ".github/workflows/wheels.yml": "4f2ff7e5f7b5def62cf51b4d14f9a058c1b3b01d3f1bdf1da51a7f985f86e5c2"
   },
   "generator_sha256": "9fe7eb2612d4c4d8436e5a627541cad32d0dcba429639855b5a0a2af04b9729a",
   "schema": "alpha-bridge/fork-ci",
   "source_branch": "main",
-  "source_commit": "9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42",
+  "source_commit": "a442e4bb39551feb7b0af4c00075e2cb91cf9b77",
   "source_repository": "scikit-learn/scikit-learn",
   "version": 1,
   "workflows": [

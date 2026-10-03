@@ -35,7 +35,7 @@ jobs:
       uses: actions/checkout@v7
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - uses: actions/setup-python@v6
       with:
@@ -258,7 +258,7 @@ jobs:
       # non-matrix jobs (like free-threaded or scipy-dev builds).
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - name: Set JOB_NAME variable
       shell: bash
@@ -430,7 +430,7 @@ jobs:
 
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && '9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42' || 
+          'workflow_run') && 'a442e4bb39551feb7b0af4c00075e2cb91cf9b77' || 
           github.sha }}
     - name: Create cache for ccache
       uses: actions/cache@v5
@@ -576,9 +576,9 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         AB_REPOSITORY: ${{ github.repository }}
         AB_RUN_ID: ${{ github.run_id }}
-        AB_HEAD_SHA: 9bbd3371ddb5094cbfe435d0e71d7b213ac0ce42
+        AB_HEAD_SHA: a442e4bb39551feb7b0af4c00075e2cb91cf9b77
         AB_WORKFLOW_DIGEST: 
-          d76b76c28cac4f14958042f9addf022d29a52b2deacd40e0e4ac6658711a10b8
+          64c6a5e113b873e6fad3b98f37404d629c342bf3f82d9649f288268831b21870
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}
