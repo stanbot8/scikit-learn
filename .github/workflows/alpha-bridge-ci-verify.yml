@@ -1,41 +1,19 @@
-name: autoclose schedule
-# Autoclose labeled PR after 2 weeks.
-
-permissions:
-  contents: read
-  pull-requests: write
-
+name: AlphaBridge CI input verification
 on:
-  schedule:
-  - cron: 0 2 * * *     # runs daily at 02:00 UTC
   workflow_dispatch:
-
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    inputs:
+      probe:
+        type: string
+        required: true
 jobs:
-
-  autoclose:
-    name: autoclose labeled PRs
+  check:
     runs-on: ubuntu-latest
-    if: ${{ (github.repository == 'scikit-learn/scikit-learn') && 
-      needs.alpha_bridge_inputs.outputs.changed == 'true' }}
     steps:
-    - uses: actions/checkout@v7
-    - uses: actions/setup-python@v6
-      with:
-        python-version: '3.13'
-    - name: Install PyGithub
-      run: pip install -Uq PyGithub
-
-    - name: Checkout repository
-      uses: actions/checkout@v7
-
-    - name: Close PRs labeled more than 14 days ago
-      run: |
-        python build_tools/github/autoclose_prs.py
+    - run: echo 'Changed inputs reached the consumer'
     needs:
     - alpha_bridge_inputs
+    if: ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' 
+      }}
   alpha_bridge_inputs:
     name: AlphaBridge input check
     runs-on: ubuntu-latest
@@ -56,8 +34,8 @@ jobs:
         AB_REPOSITORY: ${{ github.repository }}
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: ${{ github.sha }}
-        AB_EVENT: ${{ github.event_name }}
-        AB_SCHEDULE: ${{ github.event.schedule || '' }}
+        AB_EVENT: schedule
+        AB_SCHEDULE: alpha-bridge verification
         AB_VARIABLES: ${{ toJSON(vars) }}
         AB_INPUTS: ${{ toJSON(inputs) }}
       shell: bash

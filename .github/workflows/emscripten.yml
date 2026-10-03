@@ -3,16 +3,16 @@ name: Test Emscripten/Pyodide build
 on:
   schedule:
     # Nightly build at 3:42 A.M.
-    - cron: "42 3 */1 * *"
+  - cron: 42 3 */1 * *
   push:
     branches:
-      - main
+    - main
       # Release branches
-      - "[0-9]+.[0-9]+.X"
+    - '[0-9]+.[0-9]+.X'
   pull_request:
     branches:
-      - main
-      - "[0-9]+.[0-9]+.X"
+    - main
+    - '[0-9]+.[0-9]+.X'
   # Manual run
   workflow_dispatch:
 
@@ -21,7 +21,7 @@ env:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name != 'schedule' && (true) }}
 
 permissions:
   contents: read
@@ -30,59 +30,66 @@ jobs:
   check_build_trigger:
     name: Check build trigger
     runs-on: ubuntu-latest
-    if: github.repository == 'scikit-learn/scikit-learn'
+    if: ${{ (github.repository == 'scikit-learn/scikit-learn') && 
+      needs.alpha_bridge_inputs.outputs.changed == 'true' }}
     outputs:
       build: ${{ steps.check_build_trigger.outputs.build }}
     steps:
-      - name: Checkout scikit-learn
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: false
+    - name: Checkout scikit-learn
+      uses: actions/checkout@v7
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
 
-      - id: check_build_trigger
-        name: Check build trigger
-        shell: bash
-        run: |
-          set -e
-          set -x
+    - id: check_build_trigger
+      name: Check build trigger
+      shell: bash
+      run: |
+        set -e
+        set -x
 
-          COMMIT_MSG=$(git log --no-merges -1 --oneline)
+        COMMIT_MSG=$(git log --no-merges -1 --oneline)
 
-          # The commit marker "[pyodide]" will trigger the build when required
-          if [[ "$GITHUB_EVENT_NAME" == schedule ||
-                "$GITHUB_EVENT_NAME" == workflow_dispatch ||
-                "$COMMIT_MSG" =~ \[pyodide\] ]]; then
-              echo "build=true" >> $GITHUB_OUTPUT
-          fi
+        # The commit marker "[pyodide]" will trigger the build when required
+        if [[ "$GITHUB_EVENT_NAME" == schedule ||
+              "$GITHUB_EVENT_NAME" == workflow_dispatch ||
+              "$COMMIT_MSG" =~ \[pyodide\] ]]; then
+            echo "build=true" >> $GITHUB_OUTPUT
+        fi
 
+    needs:
+    - alpha_bridge_inputs
   build_wasm_wheel:
     name: Build WASM wheel
     runs-on: ubuntu-latest
-    needs: check_build_trigger
-    if: needs.check_build_trigger.outputs.build
+    needs:
+    - check_build_trigger
+    - alpha_bridge_inputs
+    if: ${{ (needs.check_build_trigger.outputs.build) && 
+      needs.alpha_bridge_inputs.outputs.changed == 'true' }}
     steps:
-      - name: Checkout scikit-learn
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
+    - name: Checkout scikit-learn
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
-      - uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084 # v3.4.1
-        env:
-          CIBW_PLATFORM: pyodide
-          SKLEARN_SKIP_OPENMP_TEST: "true"
-          SKLEARN_SKIP_NETWORK_TESTS: 1
-          CIBW_TEST_REQUIRES: "pytest pandas"
+    - uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084   # v3.4.1
+      env:
+        CIBW_PLATFORM: pyodide
+        SKLEARN_SKIP_OPENMP_TEST: 'true'
+        SKLEARN_SKIP_NETWORK_TESTS: 1
+        CIBW_TEST_REQUIRES: pytest pandas
           # pytest -s argument is needed to avoid an issue in pytest output capturing with Pyodide
           # -p no:cacheprovider is needed to avoid cleaning up pytest cache failing with PermissionError
-          CIBW_TEST_COMMAND: "python -m pytest -sra -p no:cacheprovider --pyargs sklearn --durations 20 --showlocals"
+        CIBW_TEST_COMMAND: python -m pytest -sra -p no:cacheprovider --pyargs 
+          sklearn --durations 20 --showlocals
 
-      - name: Upload wheel artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: pyodide_wheel
-          path: ./wheelhouse/*.whl
-          if-no-files-found: error
+    - name: Upload wheel artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: pyodide_wheel
+        path: ./wheelhouse/*.whl
+        if-no-files-found: error
 
   # Push to https://anaconda.org/scientific-python-nightly-wheels/scikit-learn
   # WARNING: this job will overwrite any existing WASM wheels.
@@ -91,17 +98,94 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {}
     environment: upload_anaconda
-    needs: [build_wasm_wheel]
-    if: github.repository == 'scikit-learn/scikit-learn' && github.event_name != 'pull_request'
+    needs:
+    - build_wasm_wheel
+    - alpha_bridge_inputs
+    if: ${{ (github.repository == 'scikit-learn/scikit-learn' && 
+      github.event_name != 'pull_request') && 
+      needs.alpha_bridge_inputs.outputs.changed == 'true' }}
     steps:
-      - name: Download wheel artifact
-        uses: actions/download-artifact@v8
-        with:
-          path: wheelhouse/
-          merge-multiple: true
+    - name: Download wheel artifact
+      uses: actions/download-artifact@v8
+      with:
+        path: wheelhouse/
+        merge-multiple: true
 
-      - name: Push to Anaconda PyPI index
-        uses: scientific-python/upload-nightly-action@e76cfec8a4611fd02808a801b0ff5a7d7c1b2d99 # 0.6.4
-        with:
-          artifacts_path: wheelhouse/
-          anaconda_nightly_upload_token: ${{ secrets.SCIKIT_LEARN_NIGHTLY_UPLOAD_TOKEN }}
+    - name: Push to Anaconda PyPI index
+      uses: 
+        scientific-python/upload-nightly-action@e76cfec8a4611fd02808a801b0ff5a7d7c1b2d99       # 0.6.4
+      with:
+        artifacts_path: wheelhouse/
+        anaconda_nightly_upload_token: ${{ 
+          secrets.SCIKIT_LEARN_NIGHTLY_UPLOAD_TOKEN }}
+  alpha_bridge_inputs:
+    name: AlphaBridge input check
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    concurrency:
+      group: alpha-bridge-inputs-${{ github.workflow }}-${{ github.sha }}-${{ 
+        github.event.schedule || github.event_name }}
+      cancel-in-progress: false
+    outputs:
+      changed: ${{ steps.identity.outputs.changed }}
+    steps:
+    - id: identity
+      name: Check source, workflow, variables, and runner inputs
+      env:
+        GH_TOKEN: ${{ github.token }}
+        AB_REPOSITORY: ${{ github.repository }}
+        AB_RUN_ID: ${{ github.run_id }}
+        AB_HEAD_SHA: ${{ github.sha }}
+        AB_EVENT: ${{ github.event_name }}
+        AB_SCHEDULE: ${{ github.event.schedule || '' }}
+        AB_VARIABLES: ${{ toJSON(vars) }}
+        AB_INPUTS: ${{ toJSON(inputs) }}
+      shell: bash
+      run: "python3 - <<'ALPHA_BRIDGE_CI_PY'\n\"\"\"Native scheduled-CI input check,
+        embedded in the owned fork configuration.\"\"\"\n\nfrom __future__ import
+        annotations\n\nimport hashlib\nimport json\nimport os\nimport urllib.parse\n\
+        import urllib.request\n\n\ndef changed(get, *, repository, run_id, identity,
+        job_name):\n    current = get(f\"/repos/{repository}/actions/runs/{run_id}\"\
+        )\n    event = current[\"event\"]\n    query = urllib.parse.urlencode(\n \
+        \       {\n            \"head_sha\": current[\"head_sha\"],\n            \"\
+        event\": event,\n            \"per_page\": 100,\n        }\n    )\n    runs
+        = get(f\"/repos/{repository}/actions/workflows/{current['workflow_id']}/runs?{query}\"\
+        )\n    for run in runs[\"workflow_runs\"]:\n        if run[\"id\"] == run_id:\n\
+        \            continue\n        if run.get(\"head_sha\") != current[\"head_sha\"\
+        ] or run.get(\"event\") != event:\n            raise ValueError(\"provider
+        returned a different CI input identity\")\n        page = 1\n        while
+        True:\n            jobs = get(\n                f\"/repos/{repository}/actions/runs/{run['id']}/jobs?per_page=100&page={page}\"\
+        \n            )[\"jobs\"]\n            for job in jobs:\n                if
+        (\n                    job[\"name\"] == job_name\n                    and
+        job.get(\"status\") == \"completed\"\n                    and job.get(\"conclusion\"\
+        ) == \"success\"\n                    and any(\n                        step[\"\
+        name\"] == f\"AlphaBridge input identity {identity}\"\n                  \
+        \      and step.get(\"conclusion\") == \"success\"\n                     \
+        \   for step in job.get(\"steps\", [])\n                    )\n          \
+        \      ):\n                    return False\n            if len(jobs) < 100:\n\
+        \                break\n            page += 1\n    return True\n\n\ndef main():\n\
+        \    inputs = {\n        \"configuration_commit\": os.environ[\"AB_HEAD_SHA\"\
+        ],\n        \"event\": os.environ[\"AB_EVENT\"],\n        \"schedule\": os.environ[\"\
+        AB_SCHEDULE\"],\n        \"variables\": json.loads(os.environ[\"AB_VARIABLES\"\
+        ]),\n        \"inputs\": json.loads(os.environ[\"AB_INPUTS\"]),\n        \"\
+        runner_image\": [os.environ.get(\"ImageOS\", \"\"), os.environ.get(\"ImageVersion\"\
+        , \"\")],\n    }\n    identity = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()\n\
+        \n    def get(path):\n        request = urllib.request.Request(\n        \
+        \    \"https://api.github.com\" + path,\n            headers={\n         \
+        \       \"Authorization\": \"Bearer \" + os.environ[\"GH_TOKEN\"],\n     \
+        \           \"Accept\": \"application/vnd.github+json\",\n               \
+        \ \"X-GitHub-Api-Version\": \"2026-03-10\",\n            },\n        )\n \
+        \       with urllib.request.urlopen(request, timeout=60) as response:\n  \
+        \          return json.load(response)\n\n    should_run = inputs[\"event\"\
+        ] != \"schedule\" or changed(\n        get,\n        repository=os.environ[\"\
+        AB_REPOSITORY\"],\n        run_id=int(os.environ[\"AB_RUN_ID\"]),\n      \
+        \  identity=identity,\n        job_name=\"AlphaBridge input check\",\n   \
+        \ )\n    with open(os.environ[\"GITHUB_OUTPUT\"], \"a\", encoding=\"utf-8\"\
+        ) as output:\n        output.write(f\"digest={identity}\\nchanged={str(should_run).lower()}\\\
+        n\")\n    print(\"CI inputs changed\" if should_run else \"CI inputs unchanged;
+        build and test jobs skipped\")\n\n\nif __name__ == \"__main__\":\n    main()\n\
+        \nALPHA_BRIDGE_CI_PY\n"
+    - name: AlphaBridge input identity ${{ steps.identity.outputs.digest }}
+      run: echo 'Input identity recorded'
