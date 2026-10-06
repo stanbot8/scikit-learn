@@ -39,7 +39,7 @@ jobs:
           path: merge-main-into-pr-branch
 
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -99,12 +99,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            7312f649eaeb60f0d2424c1e14c09ed1480c69e066140ab836c900a171456f12
+            4957fa642722fdc49cd7a6888ea54378e7d5eab4caa6a94d4592ad5998ae8501
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

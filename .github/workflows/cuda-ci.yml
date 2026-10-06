@@ -20,7 +20,7 @@ jobs:
 
         with:
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Build wheels
         uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084 # v3.4.1
@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Install miniforge
         run: |-
@@ -115,12 +115,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            d77f31775827f3eb3cac588c116ac76122ceb5e9cb7c9a656ed02c3ac45f6e15
+            eedbf02058e4fc6b9d935d281db7c03a1282ffdef200ef02233dde26ac89d002
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: '0'
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Check if tests have changed
         id: tests_changed
@@ -77,12 +77,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            9463beea04d99a5fa6ad8ebf568eb4f1753b9704127128cdae441b968e9819e7
+            98adacffeb2c82bb521c13c726196f9b27376eb70f34b0bc91f1162b6a3186f4
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

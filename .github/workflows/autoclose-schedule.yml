@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - uses: actions/setup-python@v6
         with:
@@ -39,7 +39,7 @@ jobs:
 
         with:
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Close PRs labeled more than 14 days ago
         run: |
@@ -67,12 +67,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            59c5ed8ef99fac1603b3f878556dcc41bdc53b9ea65a4d8ec41ec9e028d926a6
+            5142dc41e38840e74664c38dc26d8c3e92dead1f3da4edc4e48afb55ccc07af4
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

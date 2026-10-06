@@ -59,7 +59,7 @@ jobs:
           sparse-checkout: build_tools/get_comment.py
 
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -105,12 +105,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            e3836945f6400b750b8033121cfcecaea875d538b3b1163131d89297d9fc3c20
+            e59f71b1a64b728e3b480ba9e6dba520a470af31f6dd85891af18050c1031fcb
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

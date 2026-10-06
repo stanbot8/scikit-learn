@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Generate lock files
         run: |
@@ -46,7 +46,8 @@ jobs:
           conda update -n base --all
           conda install -n base conda conda-libmamba-solver -y
           conda config --set solver libmamba
-          conda install -c conda-forge "$(get_dep conda-lock min)" -y
+          conda create -n conda-lock-env -c conda-forge "$(get_dep conda-lock min)" -y
+          conda activate conda-lock-env
 
           python build_tools/update_environments_and_lock_files.py ${{ matrix.update_script_args }}
 
@@ -112,7 +113,7 @@ jobs:
       actions: read
       contents: read
     concurrency:
-      group: alpha-bridge-inputs-fe5632857380fb36-${{ github.workflow }}-${{ 
+      group: alpha-bridge-inputs-e363fcaf07f5f4a0-${{ github.workflow }}-${{ 
         github.sha }}-${{ github.event.schedule || github.event_name }}
       cancel-in-progress: false
       queue: max
@@ -126,12 +127,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            64fde132095f87a0f413f93b3b897a710fe7a2a1c17767a26e98702deb798226
+            6548935ea6f87ea5aca8b1e146bb8cc19b012512ab8de50f67f6267f45b97bea
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

@@ -35,7 +35,7 @@ jobs:
           sparse-checkout: .github/scripts/add_or_remove_no_pr_warning.py
           sparse-checkout-cone-mode: false # false for files/ true for directories
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Add not-ready-for-PR warning
         run: |-
@@ -62,7 +62,7 @@ jobs:
           sparse-checkout: .github/scripts/add_or_remove_no_pr_warning.py
           sparse-checkout-cone-mode: false # false for files/ true for directories
           ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-            'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
       - name: Remove not-ready-for-PR warning
         run: |-
@@ -90,12 +90,12 @@ jobs:
           AB_REPOSITORY: ${{ github.repository }}
           AB_RUN_ID: ${{ github.run_id }}
           AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name
-            == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+            == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
             github.sha }}
           AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
             'workflow_run') && 'refs/heads/main' || github.ref }}
           AB_WORKFLOW_DIGEST: 
-            0e7272864729a27df8088788704f11c39871045d85c576d73abf5044652c720d
+            26f8cca591f0042710f34b56b6b1fe0e823cebc349c314ccef318a1812ef76ee
           AB_EVENT: ${{ github.event_name }}
           AB_SCHEDULE: ${{ github.event.schedule || '' }}
           AB_VARIABLES: ${{ toJSON(vars) }}

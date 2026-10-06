@@ -42,7 +42,7 @@ jobs:
     # Initializes the CodeQL tools for scanning.
       with:
         ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+          'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
           github.sha }}
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
@@ -100,12 +100,12 @@ jobs:
         AB_REPOSITORY: ${{ github.repository }}
         AB_RUN_ID: ${{ github.run_id }}
         AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name 
-          == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
+          == 'workflow_run') && '9ac73fe26b92e21aca14a9551e683bf23fc7c49e' || 
           github.sha }}
         AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
           'workflow_run') && 'refs/heads/main' || github.ref }}
         AB_WORKFLOW_DIGEST: 
-          1365cde05b47778f2bb4a03519a464f1fee9c57a6de321d259290fbfb47619d0
+          5dfdc95b408c04a35ac50cb99f89365886652c3fee374d81fbd4a68d17d123ac
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}
