@@ -34,8 +34,8 @@ jobs:
         CONTEXT_GITHUB: ${{ toJson(github) }}
     needs:
     - alpha_bridge_inputs
-    if: ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' 
-      }}
+    if: |-
+      ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' }}
   alpha_bridge_inputs:
     name: CI input check
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
         AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
           'workflow_run') && 'refs/heads/main' || github.ref }}
         AB_WORKFLOW_DIGEST: 
-          8cdf15ae48cbb33139aad5c33451c08eeaf1b62d3b2ad2595ff73caed69ec38e
+          6eaf34c9cf412b32d89617957b413f46edf71dddcb8d8569a1506702fc6027da
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

@@ -1,12 +1,12 @@
-name: CodeQL
+name: "CodeQL"
 
 on:
   push:
-    branches: [main, '*.X']
+    branches: ["main", "*.X"]
   pull_request:
-    branches: [main, '*.X']
+    branches: ["main", "*.X"]
   schedule:
-  - cron: 0 6 * * 1
+  - cron: '0 6 * * 1'
 
 jobs:
   analyze:
@@ -16,7 +16,7 @@ jobs:
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners
     # Consider using larger runners for possible analysis time improvements.
-    runs-on: ubuntu-latest
+    runs-on: 'ubuntu-latest'
     timeout-minutes: 360
     permissions:
       # required for all workflows
@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [javascript-typescript, python, actions]
+        language: ['javascript-typescript', 'python', 'actions']
         # CodeQL supports [ 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift' ]
         # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
         # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
@@ -74,11 +74,11 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
-        category: /language:${{matrix.language}}
+        category: "/language:${{matrix.language}}"
     needs:
     - alpha_bridge_inputs
-    if: ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' 
-      }}
+    if: |-
+      ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' }}
   alpha_bridge_inputs:
     name: CI input check
     runs-on: ubuntu-latest
@@ -104,7 +104,7 @@ jobs:
         AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
           'workflow_run') && 'refs/heads/main' || github.ref }}
         AB_WORKFLOW_DIGEST: 
-          aaf90a7c822486b03bb676509e69e339b13953091a0bf362068a8a017d97d23d
+          76106cdfc98af8dae32dd53a732c8e274c20623f36e0fcea9a62ceabab421809
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}

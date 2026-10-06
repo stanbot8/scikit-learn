@@ -1,4 +1,4 @@
-name: Pull Request Labeler
+name: "Pull Request Labeler"
 on:
   pull_request_target:
     types: [opened]
@@ -18,14 +18,14 @@ jobs:
       continue-on-error: true
       if: github.repository == 'scikit-learn/scikit-learn'
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        max-labels: '3'
-        configuration-path: .github/labeler-module.yml
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        max-labels: "3"
+        configuration-path: ".github/labeler-module.yml"
 
     needs:
     - alpha_bridge_inputs
-    if: ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' 
-      }}
+    if: |-
+      ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' }}
   triage_file_extensions:
     runs-on: ubuntu-latest
     steps:
@@ -33,12 +33,12 @@ jobs:
       continue-on-error: true
       if: github.repository == 'scikit-learn/scikit-learn'
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        configuration-path: .github/labeler-file-extensions.yml
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: ".github/labeler-file-extensions.yml"
     needs:
     - alpha_bridge_inputs
-    if: ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' 
-      }}
+    if: |-
+      ${{ (success()) && needs.alpha_bridge_inputs.outputs.changed == 'true' }}
   alpha_bridge_inputs:
     name: CI input check
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
         AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
           'workflow_run') && 'refs/heads/main' || github.ref }}
         AB_WORKFLOW_DIGEST: 
-          ada798dd0b7e3af76c4254dc2ca70e32c013e7356e1e286492390890b1c606e3
+          9b15d0daae7e25fd2b677a65e382bdf48701c2e9f5df74ce117030aacfd34e2f
         AB_EVENT: ${{ github.event_name }}
         AB_SCHEDULE: ${{ github.event.schedule || '' }}
         AB_VARIABLES: ${{ toJSON(vars) }}
