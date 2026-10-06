@@ -1,37 +1,15 @@
-name: Pull Request Regex Title Labeler
+name: CI input probe
 on:
-  pull_request_target:
-    types: [opened, edited]
-
-# Restrict the permissions granted to the use of secrets.GITHUB_TOKEN in this
-# github actions workflow:
-# https://docs.github.com/en/actions/security-guides/automatic-token-authentication
-permissions:
-  contents: read
-  pull-requests: write
-
+  workflow_call:
+    inputs:
+      probe:
+        type: string
+        required: true
 jobs:
-
-  labeler:
-    runs-on: ubuntu-24.04
+  check:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
-      with:
-        persist-credentials: false
-        ref: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
-          github.sha }}
-    - uses: actions/setup-python@v6
-      with:
-        python-version: '3.9'
-    - name: Install PyGithub
-      run: |-
-        pip install -Uq PyGithub
-    - name: Label pull request
-      run: |-
-        python .github/scripts/label_title_regex.py
-      env:
-        CONTEXT_GITHUB: ${{ toJson(github) }}
+    - run: echo 'Changed inputs reached the consumer'
     needs:
     - alpha_bridge_inputs
     if: |-
@@ -55,15 +33,12 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         AB_REPOSITORY: ${{ github.repository }}
         AB_RUN_ID: ${{ github.run_id }}
-        AB_HEAD_SHA: ${{ (github.event_name == 'schedule' || github.event_name 
-          == 'workflow_run') && 'c1f21786a8dc523c56ebb24f53b09dc14a57ea4d' || 
-          github.sha }}
-        AB_REF: ${{ (github.event_name == 'schedule' || github.event_name == 
-          'workflow_run') && 'refs/heads/main' || github.ref }}
+        AB_HEAD_SHA: ${{ github.sha }}
+        AB_REF: ${{ github.ref }}
         AB_WORKFLOW_DIGEST: 
-          3d1829ca4388af02d0a4bedec66f92b22fd2882c55c5ef6c8dfb5ce24f9ad807
-        AB_EVENT: ${{ github.event_name }}
-        AB_SCHEDULE: ${{ github.event.schedule || '' }}
+          aeb0c6e2caf9e7aa08ace6ecf5bf2a46ae50d577b223dd23f9d645eb0c1d6792
+        AB_EVENT: schedule
+        AB_SCHEDULE: alpha-bridge verification
         AB_VARIABLES: ${{ toJSON(vars) }}
         AB_INPUTS: ${{ toJSON(inputs) }}
         AB_WORKFLOW_RUN: ${{ toJSON(github.event.workflow_run) }}
